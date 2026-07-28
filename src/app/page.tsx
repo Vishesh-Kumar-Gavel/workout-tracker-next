@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 
 type Workout = {
@@ -69,63 +70,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen bg-neutral-950 text-neutral-100">
-      {/* Sidebar */}
-      <aside className="hidden w-64 flex-col border-r border-neutral-800 bg-neutral-950/80 px-6 py-6 md:flex">
-        <div className="mb-8 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30">
-            <span className="text-lg font-semibold">WT</span>
-          </div>
-          <div>
-            <div className="text-sm font-semibold tracking-tight">
-              Workout Tracker
-            </div>
-            <div className="text-xs text-neutral-500">
-              Daily performance dashboard
-            </div>
-          </div>
-        </div>
-
-        <nav className="space-y-1 text-sm">
-          <button className="flex w-full items-center gap-2 rounded-lg bg-neutral-900/80 px-3 py-2 text-left text-neutral-100 ring-1 ring-emerald-500/40">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-emerald-500/10 text-emerald-400">
-              ●
-            </span>
-            <span className="font-medium">Dashboard</span>
-          </button>
-          <button className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-neutral-400 transition hover:bg-neutral-900/60 hover:text-neutral-100">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-neutral-900 text-neutral-500">
-              ▢
-            </span>
-            Workouts
-          </button>
-          <button className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-neutral-400 transition hover:bg-neutral-900/60 hover:text-neutral-100">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-neutral-900 text-neutral-500">
-              ▲
-            </span>
-            Analytics
-          </button>
-          <button className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-neutral-400 transition hover:bg-neutral-900/60 hover:text-neutral-100">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-neutral-900 text-neutral-500">
-              ⚙
-            </span>
-            Settings
-          </button>
-        </nav>
-
-        <div className="mt-auto pt-8 text-xs text-neutral-500">
-          <div className="mb-2 text-neutral-400">Today&apos;s focus</div>
-          <div className="rounded-lg border border-neutral-800 bg-neutral-900/60 px-3 py-3">
-            <div className="mb-1 text-xs font-medium text-neutral-200">
-              Upper Body Strength
-            </div>
-            <div className="text-[11px] text-neutral-500">
-              Log bench, rows, and accessory work.
-            </div>
-          </div>
-        </div>
-      </aside>
-
+    <div>
       {/* Main content */}
       <main className="flex flex-1 flex-col px-4 py-4 md:px-8 md:py-6">
         {/* Top bar for mobile + title */}

@@ -1,0 +1,119 @@
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { deleteRoutine, loadRoutines, Routine } from "../lib/routines";
+
+export default function WorkoutsPage() {
+  const [routines, setRoutines] = useState<Routine[]>([]);
+
+  useEffect(() => {
+    setRoutines(loadRoutines());
+  }, []);
+
+  const handleDelete = (id: string) => {
+    deleteRoutine(id);
+    setRoutines(loadRoutines());
+  };
+
+  return (
+    <main className="flex flex-1 flex-col px-4 py-4 md:px-8 md:py-6">
+      <header className="mb-6 flex items-center justify-between gap-3">
+        <div>
+          <h1 className="text-lg font-semibold tracking-tight text-neutral-50 md:text-xl">
+            Workouts
+          </h1>
+          <p className="text-xs text-neutral-500 md:text-sm">
+            Your saved routines
+          </p>
+        </div>
+
+        <Link
+          href="/create-routine"
+          className="inline-flex h-9 items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/20"
+        >
+          <Image
+            src="/notepad-text-white.svg"
+            alt=""
+            height={16}
+            width={16}
+          />
+          New Routine
+        </Link>
+      </header>
+
+      {routines.length === 0 ? (
+        <section className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-800 px-6 py-16 text-center">
+          <p className="text-sm text-neutral-400">No routines yet</p>
+          <p className="mt-1 max-w-sm text-xs text-neutral-500">
+            Create a routine with exercises, sets, and reps to reuse in future
+            workouts.
+          </p>
+          <Link
+            href="/create-routine"
+            className="mt-4 inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-900/80 px-4 py-2 text-xs font-medium text-neutral-200 transition hover:border-emerald-500/40 hover:text-emerald-200"
+          >
+            <Image
+              src="/notepad-text-white.svg"
+              alt=""
+              height={16}
+              width={16}
+            />
+            Create your first routine
+          </Link>
+        </section>
+      ) : (
+        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {routines.map((routine) => (
+            <li
+              key={routine.id}
+              className="flex flex-col rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5"
+            >
+              <div className="mb-3 flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h2 className="truncate text-sm font-semibold text-neutral-50">
+                    {routine.name}
+                  </h2>
+                  <p className="mt-0.5 text-xs text-neutral-500">
+                    {routine.exercises.length} exercise
+                    {routine.exercises.length === 1 ? "" : "s"} ·{" "}
+                    {new Date(routine.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(routine.id)}
+                  className="shrink-0 text-xs text-neutral-500 transition hover:text-red-300"
+                >
+                  Delete
+                </button>
+              </div>
+
+              <ul className="space-y-2 border-t border-neutral-800 pt-3">
+                {routine.exercises.map((exercise) => (
+                  <li
+                    key={`${routine.id}-${exercise.exerciseId}`}
+                    className="flex items-center justify-between gap-3 text-xs"
+                  >
+                    <div className="min-w-0">
+                      <div className="truncate text-neutral-200">
+                        {exercise.name}
+                      </div>
+                      <div className="text-neutral-500">
+                        {exercise.mainMuscle}
+                      </div>
+                    </div>
+                    <span className="shrink-0 text-neutral-400">
+                      {exercise.sets}×{exercise.reps}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
+  );
+}
