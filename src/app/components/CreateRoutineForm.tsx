@@ -41,7 +41,7 @@ export default function CreateRoutineForm({ exercises }: CreateRoutineFormProps)
   }, [exercises, deferredQuery]);
 
   const addedIds = useMemo(
-    () => new Set(draftExercises.map((item) => item.exerciseId)),
+    () => new Set(draftExercises.map((item) => item.id)),
     [draftExercises]
   );
 
@@ -53,7 +53,7 @@ export default function CreateRoutineForm({ exercises }: CreateRoutineFormProps)
       ...prev,
       {
         key: crypto.randomUUID(),
-        exerciseId,
+        id:exercise.id,
         name: exercise.name,
         mainMuscle: exercise.mainMuscle,
         equipment: exercise.equipment,
@@ -111,8 +111,8 @@ export default function CreateRoutineForm({ exercises }: CreateRoutineFormProps)
     saveRoutine({
       name: name.trim(),
       exercises: draftExercises.map(
-        ({ exerciseId, name, mainMuscle, equipment, sets, reps }) => ({
-          exerciseId,
+        ({ id, name, mainMuscle, equipment, sets, reps }) => ({
+          id,
           name,
           mainMuscle,
           equipment,
