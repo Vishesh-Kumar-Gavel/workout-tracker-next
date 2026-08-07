@@ -1,5 +1,7 @@
+const API_URL = "http://localhost:8080/workouts"
+
 export type RoutineExercise = {
-  exerciseId: string;
+  id: string;
   name: string;
   mainMuscle: string;
   equipment: string;
@@ -14,36 +16,64 @@ export type Routine = {
   exercises: RoutineExercise[];
 };
 
-const STORAGE_KEY = "workout-tracker:routines";
-
-export function loadRoutines(): Routine[] {
-  if (typeof window === "undefined") return [];
+export async function loadRoutines(): Promise<Routine[]> {
 
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as Routine[];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
+    const response = await fetch(API_URL) ;
+    if (!response.ok) throw new Error("Failed to fetch routines!!");
+    return await response.json();
+  } catch (error){
+    console.log("Error while loading routines:",error);
     return [];
   }
 }
 
-export function saveRoutine(routine: Omit<Routine, "id" | "createdAt">): Routine {
-  const next: Routine = {
-    id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
+export async function saveRoutine(routine: Omit<Routine, "id" | "createdAt">): Promise<Routine|null> {
+  const payload = {
     name: routine.name.trim(),
-    exercises: routine.exercises,
+    exercises: routine.exercises.map((e) => ({
+      name: e.name,
+      sets: e.sets,
+      // Converts numeric reps to backend string format (e.g., sets: 3, reps: 2 -> "2,2,2")
+      reps: Array(e.sets).fill(e.reps).join(","), 
+    })),
   };
-
-  const routines = loadRoutines();
-  routines.unshift(next);
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(routines));
-  return next;
+  try{
+    const response = await fetch(API_URL,{
+      method : "POST",
+      headers: {"Content-Type":"application/json"},
+      body : JSON.stringify(payload)
+    })
+    if(!response.ok) throw new Error("Failed to save new routine");
+    return await response.json();
+  }catch(error) {
+    console.error("Error saving routine:", error);
+    return null;
+  }
 }
 
-export function deleteRoutine(id: string): void {
-  const routines = loadRoutines().filter((routine) => routine.id !== id);
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(routines));
+export async function deleteRoutine(id: string): Promise<boolean> {
+  let isSuccess: boolean = false;
+  try {
+    const response = await fetch(API_URL, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // Spring Boot @RequestBody String expects the raw string payload
+      body: JSON.stringify(id), 
+    });
+
+    isSuccess= await response.json();
+
+    if (isSuccess) {
+      console.log('Workout deleted successfully');
+    } else {
+      console.error('Delete operation returned false');
+    }
+    return isSuccess;
+  } catch (error) {
+    console.error('Failed to delete workout:', error);
+  }
+  return isSuccess;
 }

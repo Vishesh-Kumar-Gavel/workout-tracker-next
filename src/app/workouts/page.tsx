@@ -9,12 +9,19 @@ export default function WorkoutsPage() {
   const [routines, setRoutines] = useState<Routine[]>([]);
 
   useEffect(() => {
-    setRoutines(loadRoutines());
+    async function fetchRoutines() {
+      const data = await loadRoutines();
+      setRoutines(data);
+    }
+
+    fetchRoutines();
   }, []);
 
-  const handleDelete = (id: string) => {
-    deleteRoutine(id);
-    setRoutines(loadRoutines());
+  const handleDelete = async (id: string) => {
+    await deleteRoutine(id);
+    loadRoutines().then((data)=>{
+      setRoutines(data);
+    });
   };
 
   return (
@@ -93,7 +100,7 @@ export default function WorkoutsPage() {
               <ul className="space-y-2 border-t border-neutral-800 pt-3">
                 {routine.exercises.map((exercise) => (
                   <li
-                    key={`${routine.id}-${exercise.exerciseId}`}
+                    key={`${routine.id}-${exercise.id}`}
                     className="flex items-center justify-between gap-3 text-xs"
                   >
                     <div className="min-w-0">
