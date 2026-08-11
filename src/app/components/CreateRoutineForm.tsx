@@ -25,8 +25,19 @@ export default function CreateRoutineForm({ exercises }: CreateRoutineFormProps)
 
   const deferredQuery = useDeferredValue(query.trim().toLowerCase());
 
+  const addedExerciseIds= useMemo(
+    ()=> new Set(draftExercises.map((e)=>String(e.id)))
+    ,[draftExercises]
+  );
+  
   const filtered = useMemo(() => {
-    if (!deferredQuery) return exercises.slice(0, 40);
+    if (!deferredQuery) {
+      const selectedSet = new Set(draftExercises.map((e)=>e.id));
+
+      const selectedExercises = exercises.filter((e)=>selectedSet.has(e.id));
+      const notSelectedExercises = exercises.filter((e)=>!selectedSet.has(e.id));
+      return [...selectedExercises,...notSelectedExercises];
+    }
 
     return exercises
       .filter((exercise) => {
@@ -38,52 +49,27 @@ export default function CreateRoutineForm({ exercises }: CreateRoutineFormProps)
         );
       })
       .slice(0, 40);
-  }, [exercises, deferredQuery]);
-
-  const addedIds = useMemo(
-    () => new Set(draftExercises.map((item) => item.id)),
-    [draftExercises]
-  );
+  }, [exercises, deferredQuery,draftExercises]);
 
   const addExercise = (exercise: ExerciseDescriptionType) => {
-    const exerciseId = String(exercise.id);
-    if (addedIds.has(exerciseId)) return;
-
-    setDraftExercises((prev) => [
-      ...prev,
-      {
-        key: crypto.randomUUID(),
-        id:exercise.id,
-        name: exercise.name,
-        mainMuscle: exercise.mainMuscle,
-        equipment: exercise.equipment,
-        sets: DEFAULT_SETS,
-        reps: DEFAULT_REPS,
-      },
-    ]);
-    setError(null);
-  };
-
-  const updateExercise = (
-    key: string,
-    field: "sets" | "reps",
-    value: string
-  ) => {
-    const parsed = Number(value);
-    setDraftExercises((prev) =>
-      prev.map((item) =>
-        item.key === key
-          ? {
-              ...item,
-              [field]: Number.isFinite(parsed) && parsed > 0 ? parsed : 0,
-            }
-          : item
-      )
-    );
-  };
-
-  const removeExercise = (key: string) => {
-    setDraftExercises((prev) => prev.filter((item) => item.key !== key));
+    console.log("Inside add Exercise");
+    const exerciseIdStr = String(exercise.id);
+    if(addedExerciseIds.has(exerciseIdStr)){
+      console.log("Remove Exercise");
+      setDraftExercises((prev)=> prev.filter((e)=>e.id!=exerciseIdStr))
+    }
+    else{
+      setDraftExercises((prev)=>[
+        ...prev,
+        {
+          ...exercise,
+          id: exercise.id,
+          key: `${exercise.id}-${Date.now()}`,
+          sets: DEFAULT_SETS,
+          reps: DEFAULT_REPS,
+        },
+      ])
+    }
   };
 
   const handleSave = (event: FormEvent) => {
@@ -121,6 +107,7 @@ export default function CreateRoutineForm({ exercises }: CreateRoutineFormProps)
         })
       ),
     });
+    console.log("save routine!")
     router.push("/workouts");
   };
 
@@ -177,6 +164,7 @@ export default function CreateRoutineForm({ exercises }: CreateRoutineFormProps)
             placeholder="e.g. Upper Body Strength"
             className="h-10 w-full max-w-lg rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 text-sm text-neutral-100 outline-none placeholder:text-neutral-600 focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/40"
           />
+          
         </section>
 
         <div className="grid gap-6 lg:grid-cols-2">
@@ -206,8 +194,7 @@ export default function CreateRoutineForm({ exercises }: CreateRoutineFormProps)
               ) : (
                 filtered.map((exercise) => {
                   const exerciseId = String(exercise.id);
-                  const alreadyAdded = addedIds.has(exerciseId);
-
+                  const isAdded = addedExerciseIds.has(exerciseId);
                   return (
                     <li
                       key={exerciseId}
@@ -224,11 +211,14 @@ export default function CreateRoutineForm({ exercises }: CreateRoutineFormProps)
                       </div>
                       <button
                         type="button"
-                        disabled={alreadyAdded}
                         onClick={() => addExercise(exercise)}
-                        className="shrink-0 rounded-lg border border-neutral-800 bg-neutral-900 px-2.5 py-1.5 text-xs font-medium text-neutral-300 transition hover:border-emerald-500/40 hover:text-emerald-200 disabled:cursor-not-allowed disabled:opacity-40"
+                        className={`shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-medium transition ${
+                          isAdded
+                            ? "border border-emerald-500/30 bg-emerald-500/20 text-emerald-300 cursor-default"
+                            : "border border-neutral-800 bg-neutral-900 text-neutral-300 hover:border-emerald-500/40 hover:text-emerald-200"
+                        }`}
                       >
-                        {alreadyAdded ? "Added" : "Add"}
+                        {isAdded ? "Added" : "Add"}
                       </button>
                     </li>
                   );
@@ -237,95 +227,7 @@ export default function CreateRoutineForm({ exercises }: CreateRoutineFormProps)
             </ul>
           </section>
 
-          <section className="rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5">
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <div>
-                <h2 className="text-sm font-semibold tracking-tight text-neutral-50">
-                  Routine exercises
-                </h2>
-                <p className="mt-0.5 text-xs text-neutral-500">
-                  {draftExercises.length === 0
-                    ? "No exercises yet"
-                    : `${draftExercises.length} exercise${draftExercises.length === 1 ? "" : "s"}`}
-                </p>
-              </div>
-            </div>
-
-            {draftExercises.length === 0 ? (
-              <div className="flex h-48 items-center justify-center rounded-xl border border-dashed border-neutral-800 text-sm text-neutral-500">
-                Pick exercises from the list to build your routine.
-              </div>
-            ) : (
-              <ul className="space-y-3">
-                {draftExercises.map((item, index) => (
-                  <li
-                    key={item.key}
-                    className="rounded-xl border border-neutral-800 bg-neutral-950/50 p-3"
-                  >
-                    <div className="mb-3 flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="text-xs text-neutral-500">
-                          #{index + 1}
-                        </div>
-                        <div className="truncate text-sm font-medium text-neutral-100">
-                          {item.name}
-                        </div>
-                        <div className="text-xs text-neutral-500">
-                          {item.mainMuscle}
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => removeExercise(item.key)}
-                        className="shrink-0 text-xs text-neutral-500 transition hover:text-red-300"
-                      >
-                        Remove
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label
-                          htmlFor={`sets-${item.key}`}
-                          className="text-[11px] font-medium text-neutral-400"
-                        >
-                          Sets
-                        </label>
-                        <input
-                          id={`sets-${item.key}`}
-                          type="number"
-                          min={1}
-                          value={item.sets || ""}
-                          onChange={(event) =>
-                            updateExercise(item.key, "sets", event.target.value)
-                          }
-                          className="h-9 rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 text-sm text-neutral-100 outline-none focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/40"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label
-                          htmlFor={`reps-${item.key}`}
-                          className="text-[11px] font-medium text-neutral-400"
-                        >
-                          Reps
-                        </label>
-                        <input
-                          id={`reps-${item.key}`}
-                          type="number"
-                          min={1}
-                          value={item.reps || ""}
-                          onChange={(event) =>
-                            updateExercise(item.key, "reps", event.target.value)
-                          }
-                          className="h-9 rounded-lg border border-neutral-800 bg-neutral-950/60 px-3 text-sm text-neutral-100 outline-none focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/40"
-                        />
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+          
         </div>
 
         {error && (
