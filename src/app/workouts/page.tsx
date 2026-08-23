@@ -7,14 +7,17 @@ import { deleteRoutine, loadRoutines, Routine } from "../lib/routines";
 
 export default function WorkoutsPage() {
   const [routines, setRoutines] = useState<Routine[]>([]);
-
+  const [isMounted , setIsMounted] = useState<boolean>(false);
   useEffect(() => {
     async function fetchRoutines() {
       const data = await loadRoutines();
+      console.log(data);
       setRoutines(data);
     }
 
     fetchRoutines();
+    // console.log(routines);
+    setIsMounted(true);
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -50,7 +53,7 @@ export default function WorkoutsPage() {
         </Link>
       </header>
 
-      {routines.length === 0 ? (
+      {isMounted===false || routines.length === 0 ? (
         <section className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-800 px-6 py-16 text-center">
           <p className="text-sm text-neutral-400">No routines yet</p>
           <p className="mt-1 max-w-sm text-xs text-neutral-500">
@@ -77,46 +80,11 @@ export default function WorkoutsPage() {
               key={routine.id}
               className="flex flex-col rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5"
             >
-              <div className="mb-3 flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h2 className="truncate text-sm font-semibold text-neutral-50">
-                    {routine.name}
-                  </h2>
-                  <p className="mt-0.5 text-xs text-neutral-500">
-                    {routine.exercises.length} exercise
-                    {routine.exercises.length === 1 ? "" : "s"} ·{" "}
-                    {new Date(routine.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(routine.id)}
-                  className="shrink-0 text-xs text-neutral-500 transition hover:text-red-300"
-                >
-                  Delete
-                </button>
-              </div>
-
-              <ul className="space-y-2 border-t border-neutral-800 pt-3">
-                {routine.exercises.map((exercise) => (
-                  <li
-                    key={`${routine.id}-${exercise.id}`}
-                    className="flex items-center justify-between gap-3 text-xs"
-                  >
-                    <div className="min-w-0">
-                      <div className="truncate text-neutral-200">
-                        {exercise.name}
-                      </div>
-                      <div className="text-neutral-500">
-                        {exercise.mainMuscle}
-                      </div>
-                    </div>
-                    <span className="shrink-0 text-neutral-400">
-                      {exercise.sets}×{exercise.reps}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              
+              <h2 className="truncate text-sm font-semibold text-neutral-50">
+                {routine.name}
+              </h2>
+              <button onClick={()=>handleDelete(routine.id)}>Delete</button>
             </li>
           ))}
         </ul>

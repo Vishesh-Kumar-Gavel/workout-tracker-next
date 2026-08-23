@@ -1,12 +1,17 @@
 const API_URL = "http://localhost:8080/workouts"
-
+type SetObject = {
+  reps : number,
+  isWeighted : boolean,
+  isTimed : boolean,
+  weight : number,
+  durationSeconds : number
+}
 export type RoutineExercise = {
   id: string;
   name: string;
   mainMuscle: string;
   equipment: string;
-  sets: number;
-  reps: number;
+  sets: SetObject[]
 };
 
 export type Routine = {
@@ -31,12 +36,7 @@ export async function loadRoutines(): Promise<Routine[]> {
 export async function saveRoutine(routine: Omit<Routine, "id" | "createdAt">): Promise<Routine|null> {
   const payload = {
     name: routine.name.trim(),
-    exercises: routine.exercises.map((e) => ({
-      name: e.name,
-      sets: e.sets,
-      // Converts numeric reps to backend string format (e.g., sets: 3, reps: 2 -> "2,2,2")
-      reps: Array(e.sets).fill(e.reps).join(","), 
-    })),
+    exercises: routine.exercises,
   };
   try{
     const response = await fetch(API_URL,{
