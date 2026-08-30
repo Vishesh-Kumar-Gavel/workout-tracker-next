@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { deleteRoutine, loadRoutines, Routine } from "../lib/routines";
+import { Button, buttonVariants } from "../components/Button";
 
 export default function WorkoutsPage() {
   const [routines, setRoutines] = useState<Routine[]>([]);
@@ -41,7 +42,7 @@ export default function WorkoutsPage() {
 
         <Link
           href="/create-routine"
-          className="inline-flex h-9 items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/20"
+          className={buttonVariants({size:"small"})}
         >
           <Image
             src="/notepad-text-white.svg"
@@ -78,23 +79,28 @@ export default function WorkoutsPage() {
           {routines.map((routine) => (
             <li
               key={routine.id}
-              className="flex flex-col rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5 justify-evenly "
+              className="flex flex-col outline-none rounded-xl border border-neutral-800 justify-between gap-y-2"
             >
-              <div className="flex justify-between">
-                <h2 className="truncate text-sm font-semibold text-neutral-50">
+              <div className="flex justify-between rounded-xl border border-neutral-800">
+                <h2 className="truncate text-md font-semibold text-neutral-50 flex flex-col justify-center ">
                   {routine.name}
                 </h2>
-                <button onClick={() => handleDelete(routine.id)} className="border rounded-2xl transition duration-200 ease-in-out hover:bg-red-500 hover:shadow-lg p-1">Delete</button>
+                <Button intent="secondary" size="small" onClick={() => handleDelete(routine.id)}>
+                  <Image src="/bin.png"
+                  alt="Delete"
+                  height={20}
+                  width={20}/>
+                </Button>
 
               </div>
               <ul>
                 {routine.exercises.map((exercise,index)=>{
-                  return <li key={routine.id + " " + index}>
+                  return <li key={routine.id + " " + index} className="text-sm px-2">
                     {exercise.name}
                   </li>
                 })}
               </ul>
-              <Link href="/log-workout" className="border m-2 rounded-2xl p-2 flex justify-center">Start Workout</Link>
+                <Link href="/log-workout" className={buttonVariants({size:"small"})}>Start Workout</Link>
             </li>
           ))}
         </ul>

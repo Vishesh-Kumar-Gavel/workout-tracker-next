@@ -60,7 +60,7 @@ export default function ExerciseDescription({
         </div>
       </div>
 
-      <div className="mb-6 flex-grow space-y-4">
+      <div className="mb-6 grow space-y-4">
         <div>
           <h3 className="mb-1 text-sm font-bold text-zinc-100">Preparation</h3>
           <p className="text-sm leading-relaxed text-zinc-400">{preparation}</p>

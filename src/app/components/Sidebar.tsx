@@ -31,9 +31,7 @@ export default function Sidebar(){
                     </span>
                     <span className="font-medium">Dashboard</span>
                 </Link>
-                <Link href="/workouts" className={`flex w-full items-center gap-2 rounded-lg px-3 
-                py-2 text-left text-neutral-400 transition hover:bg-neutral-900/60 
-                hover:text-neutral-100 ${pathName==="/workouts"?'ring-1 ring-emerald-500/40 bg-neutral-900/60':''}`}>
+                <Link href="/workouts" className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-neutral-400 transition hover:bg-neutral-900/60 hover:text-neutral-100 ${pathName==="/workouts"?'ring-1 ring-emerald-500/40 bg-neutral-900/60':''}`}>
                     <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-neutral-900 text-neutral-500">
                     ▢
                     </span>
