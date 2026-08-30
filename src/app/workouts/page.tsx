@@ -7,7 +7,7 @@ import { deleteRoutine, loadRoutines, Routine } from "../lib/routines";
 
 export default function WorkoutsPage() {
   const [routines, setRoutines] = useState<Routine[]>([]);
-  const [isMounted , setIsMounted] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
   useEffect(() => {
     async function fetchRoutines() {
       const data = await loadRoutines();
@@ -22,7 +22,7 @@ export default function WorkoutsPage() {
 
   const handleDelete = async (id: string) => {
     await deleteRoutine(id);
-    loadRoutines().then((data)=>{
+    loadRoutines().then((data) => {
       setRoutines(data);
     });
   };
@@ -53,7 +53,7 @@ export default function WorkoutsPage() {
         </Link>
       </header>
 
-      {isMounted===false || routines.length === 0 ? (
+      {isMounted === false || routines.length === 0 ? (
         <section className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-800 px-6 py-16 text-center">
           <p className="text-sm text-neutral-400">No routines yet</p>
           <p className="mt-1 max-w-sm text-xs text-neutral-500">
@@ -78,13 +78,23 @@ export default function WorkoutsPage() {
           {routines.map((routine) => (
             <li
               key={routine.id}
-              className="flex flex-col rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5"
+              className="flex flex-col rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5 justify-evenly "
             >
-              
-              <h2 className="truncate text-sm font-semibold text-neutral-50">
-                {routine.name}
-              </h2>
-              <button onClick={()=>handleDelete(routine.id)}>Delete</button>
+              <div className="flex justify-between">
+                <h2 className="truncate text-sm font-semibold text-neutral-50">
+                  {routine.name}
+                </h2>
+                <button onClick={() => handleDelete(routine.id)} className="border rounded-2xl transition duration-200 ease-in-out hover:bg-red-500 hover:shadow-lg p-1">Delete</button>
+
+              </div>
+              <ul>
+                {routine.exercises.map((exercise,index)=>{
+                  return <li key={routine.id + " " + index}>
+                    {exercise.name}
+                  </li>
+                })}
+              </ul>
+              <Link href="/log-workout" className="border m-2 rounded-2xl p-2 flex justify-center">Start Workout</Link>
             </li>
           ))}
         </ul>
