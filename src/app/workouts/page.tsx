@@ -79,23 +79,31 @@ export default function WorkoutsPage() {
           {routines.map((routine) => (
             <li
               key={routine.id}
-              className="flex flex-col outline-none rounded-xl border border-neutral-800 justify-between gap-y-2"
+              className="flex flex-col outline-none rounded-xl border border-neutral-800 justify-between gap-y-2 p-2"
             >
               <div className="flex justify-between rounded-xl border border-neutral-800">
-                <h2 className="truncate text-md font-semibold text-neutral-50 flex flex-col justify-center ">
+                <h2 className="truncate text-md font-semibold text-neutral-50 flex flex-col justify-center p-2">
                   {routine.name}
                 </h2>
+                <span className="flex justify-end">
+                <Link href="/edit-workout" className={buttonVariants({intent:"secondary",size:"small"})} >
+                  <Image src="/notepad-text-white.svg"
+                  alt="Edit"
+                  height={20}
+                  width={20}/>
+                </Link>
                 <Button intent="secondary" size="small" onClick={() => handleDelete(routine.id)}>
                   <Image src="/bin.png"
                   alt="Delete"
                   height={20}
                   width={20}/>
                 </Button>
-
+                </span>
               </div>
               <ul>
                 {routine.exercises.map((exercise,index)=>{
-                  return <li key={routine.id + " " + index} className="text-sm px-2">
+                  {if(index>2)return}
+                  return <li key={routine.id + " " + index} className="text-sm px-4">
                     {exercise.name}
                   </li>
                 })}

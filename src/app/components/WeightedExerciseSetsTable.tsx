@@ -8,7 +8,19 @@ type WeightedExerciseSetsTableProps = {
     setDraftExercises: React.Dispatch<React.SetStateAction<DraftExercise[]>>,
 }
 export default function WeightedExerciseSetsTable({ exercise, draftExercises, setDraftExercises }: WeightedExerciseSetsTableProps) {
-
+    useEffect(() => {
+        console.log("Updated Draft Exercises: ", draftExercises);
+      }, [draftExercises]);
+    function handleWeight(targetExercise: DraftExercise,sWeight:number,index:number){
+        setDraftExercises(
+            (prevDraftExercises) => prevDraftExercises.map(
+                (exercise) => (exercise.id === targetExercise.id ?
+                    { ...exercise, sets: exercise.sets.map((s,i)=>(i===index?{...s,weight:sWeight}:s)) }
+                    : exercise)
+            )
+        )
+        console.log("Weight Update: ",sWeight)
+    }
     function addSet(targetExercise: DraftExercise) {
 
         const newSet = {
@@ -16,6 +28,7 @@ export default function WeightedExerciseSetsTable({ exercise, draftExercises, se
             isTimed: false,
             weight: 0,
             durationSeconds: 0,
+            reps:12
         }
         setDraftExercises(
             (prevDraftExercises) => prevDraftExercises.map(
@@ -24,7 +37,6 @@ export default function WeightedExerciseSetsTable({ exercise, draftExercises, se
                     : exercise)
             )
         )
-        console.log("Added new set length : " + targetExercise.sets.length);
     }
     const exerciseId = String(exercise.id);
     sessionStorage.setItem("draftExercises", draftExercises.toString());
@@ -47,12 +59,13 @@ export default function WeightedExerciseSetsTable({ exercise, draftExercises, se
                             </td>
                             {/* Set Weights */}
                             <td className="text-left">
-                                <input type="number" placeholder="0" className="text-left w-20" />
+                                <input type="number" step={2.5} placeholder="0" className="text-left w-20" 
+                                onChange={(e)=>{handleWeight(exercise,Number(e.target.value),index)}}/>
                             </td>
 
                             {/* Set Reps */}
                             <td className="text-left">
-                                <input type="number" placeholder="12" className="text-left w-20" />
+                                <input type="number" placeholder="12" className="text-left w-20" onChange={(e)=>{console.log(e)}}/>
                             </td>
                         </tr>
                     ))
