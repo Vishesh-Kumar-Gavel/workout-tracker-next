@@ -11,6 +11,7 @@ export default function WeightedExerciseSetsTable({ exercise, draftExercises, se
     useEffect(() => {
         console.log("Updated Draft Exercises: ", draftExercises);
       }, [draftExercises]);
+
     function handleWeight(targetExercise: DraftExercise,sWeight:number,index:number){
         setDraftExercises(
             (prevDraftExercises) => prevDraftExercises.map(
@@ -19,7 +20,16 @@ export default function WeightedExerciseSetsTable({ exercise, draftExercises, se
                     : exercise)
             )
         )
-        console.log("Weight Update: ",sWeight)
+    }
+    function handleReps(targetExercise: DraftExercise,sReps:number,index:number){
+        setDraftExercises(
+            (prevDraftExercises) => prevDraftExercises.map(
+                (exercise) => (exercise.id === targetExercise.id ?
+                    { ...exercise, sets: exercise.sets.map((s,i)=>(i===index?{...s,reps:sReps}:s)) }
+                    : exercise)
+            )
+        )
+        console.log("Reps Update: ",sReps)
     }
     function addSet(targetExercise: DraftExercise) {
 
@@ -65,7 +75,7 @@ export default function WeightedExerciseSetsTable({ exercise, draftExercises, se
 
                             {/* Set Reps */}
                             <td className="text-left">
-                                <input type="number" placeholder="12" className="text-left w-20" onChange={(e)=>{console.log(e)}}/>
+                                <input type="number" placeholder="12" className="text-left w-20" onChange={(e)=>{handleReps(exercise,Number(e.target.value),index)}}/>
                             </td>
                         </tr>
                     ))
