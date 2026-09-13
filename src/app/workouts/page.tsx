@@ -12,7 +12,6 @@ export default function WorkoutsPage() {
   useEffect(() => {
     async function fetchRoutines() {
       const data = await loadRoutines();
-      console.log(data);
       setRoutines(data);
     }
 
@@ -108,7 +107,7 @@ export default function WorkoutsPage() {
                   </li>
                 })}
               </ul>
-                <Link href="/log-workout" className={buttonVariants({size:"small"})}>Start Workout</Link>
+                <Link href={`/log-workout/?routineId=${routine.id}`} className={buttonVariants({size:"small"})}>Start Workout</Link>
             </li>
           ))}
         </ul>

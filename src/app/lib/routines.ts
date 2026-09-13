@@ -1,10 +1,13 @@
+import { DraftExercise } from "../create-routine/page";
+
+
 const API_URL = "http://localhost:8080/workouts"
 type SetObject = {
-  reps : number,
-  isWeighted : boolean,
-  isTimed : boolean,
-  weight : number,
-  durationSeconds : number
+  reps: number,
+  isWeighted: boolean,
+  isTimed: boolean,
+  weight: number,
+  durationSeconds: number
 }
 export type RoutineExercise = {
   id: string;
@@ -24,29 +27,45 @@ export type Routine = {
 export async function loadRoutines(): Promise<Routine[]> {
 
   try {
-    const response = await fetch(API_URL) ;
+    const response = await fetch(API_URL);
     if (!response.ok) throw new Error("Failed to fetch routines!!");
     return await response.json();
-  } catch (error){
-    console.log("Error while loading routines:",error);
+  } catch (error) {
+    console.log("Error while loading routines:", error);
     return [];
   }
 }
+export async function loadRoutine(routineId: string): Promise<Routine> {
 
-export async function saveRoutine(routine: Omit<Routine, "id" | "createdAt">): Promise<Routine|null> {
+  try {
+    //send a get request with request param as routineID
+    const url = new URL(API_URL);
+    const params = {
+      routineId : routineId
+    }
+    url.search = new URLSearchParams(params).toString();
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to fetch routine!!");
+    return await response.json();
+  } catch (error) {
+    console.log("Error while loading routines:", error);
+    return {name:"",id:"",createdAt:"",exercises:[]};
+  }
+}
+export async function saveRoutine(routine: Omit<Routine, "id" | "createdAt">): Promise<Routine | null> {
   const payload = {
     name: routine.name.trim(),
     exercises: routine.exercises,
   };
-  try{
-    const response = await fetch(API_URL,{
-      method : "POST",
-      headers: {"Content-Type":"application/json"},
-      body : JSON.stringify(payload)
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
     })
-    if(!response.ok) throw new Error("Failed to save new routine");
+    if (!response.ok) throw new Error("Failed to save new routine");
     return await response.json();
-  }catch(error) {
+  } catch (error) {
     console.error("Error saving routine:", error);
     return null;
   }
@@ -61,10 +80,10 @@ export async function deleteRoutine(id: string): Promise<boolean> {
         'Content-Type': 'application/json',
       },
       // Spring Boot @RequestBody String expects the raw string payload
-      body: JSON.stringify(id), 
+      body: JSON.stringify(id),
     });
 
-    isSuccess= await response.json();
+    isSuccess = await response.json();
 
     if (isSuccess) {
       console.log('Workout deleted successfully');
