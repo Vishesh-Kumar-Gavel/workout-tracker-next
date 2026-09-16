@@ -5,7 +5,8 @@ export const buttonVariants = cva("flex justify-center", {
   variants: {
     intent: {
       primary: ["inline-flex h-9 items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/20"],
-      secondary: ["flex items-center gap-2 rounded-lg px-3 py-2 text-left text-neutral-400 transition hover:bg-neutral-900/60 hover:text-neutral-100"],
+      cancel: ["inline-flex h-9 items-center gap-2 rounded-full  bg-red-500/10 px-3 text-xs font-medium text-neutral-300 transition hover:bg-red-500/20"],
+      secondary:["inline-flex items-center justify-center rounded-full border border-neutral-800 bg-neutral-900/80 px-3 text-xs font-medium text-neutral-300 transition hover:border-neutral-700 hover:text-neutral-100"]
     },
     size: {
       small: ["text-sm", "py-1", "px-2"],
@@ -23,11 +24,11 @@ export const buttonVariants = cva("flex justify-center", {
       class: "hover:bg-blue-600",
     },
     {
-      intent: "secondary",
+      intent: "cancel",
       disabled: false,
-      class: "hover:bg-gray-100",
+      class: "hover:bg-red-100",
     },
-    { intent: "primary", size: "medium", class: "uppercase" },
+    { intent: "primary", size: "medium", class: "" },
   ],
   defaultVariants: {
     disabled: false,

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { loadRoutine, Routine , RoutineExercise} from "../lib/routines";
 import WeightedExerciseSetsTable from "../components/WeightedExerciseSetsTable";
 import { DraftExercise} from "../create-routine/page";
+import { buttonVariants } from "../components/Button";
 export default function LogWorkout() {
     const searchParams = useSearchParams();
     const routineId = searchParams.get('routineId');
@@ -37,16 +38,16 @@ export default function LogWorkout() {
         <div className="flex items-center gap-2">
           <Link
             href="/workouts"
-            className="inline-flex h-9 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900/80 px-3 text-xs font-medium text-neutral-300 transition hover:border-neutral-700 hover:text-neutral-100"
+            className={buttonVariants({intent:"cancel",size:"medium"})}
           >
-            Cancel
+            Discard
           </Link>
           <Link
             type="submit"
             href = "/workouts"
-            className="inline-flex h-9 items-center justify-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 text-xs font-medium text-emerald-300 transition hover:bg-emerald-500/20 disabled:opacity-50"
+            className={buttonVariants({intent:"primary",size:"medium"})}
           >
-            Create Routine
+            Finish
           </Link>
         </div>
       </header>

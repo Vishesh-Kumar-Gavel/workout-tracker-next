@@ -2,6 +2,7 @@
 import { DraftExercise } from "../create-routine/page"
 import Link from "next/link";
 import { FormEvent, use, useEffect } from "react";
+import { buttonVariants } from "./Button";
 type WeightedExerciseSetsTableProps = {
     exercise: DraftExercise,
     draftExercises: DraftExercise[],
@@ -83,7 +84,7 @@ export default function WeightedExerciseSetsTable({ exercise, draftExercises, se
             </tbody>
         </table>
         {/* Add Set */}
-        <button className="inline-flex items-center justify-center rounded-full border border-neutral-800 bg-neutral-900/80 px-3 text-xs font-medium text-neutral-300 transition hover:border-neutral-700 hover:text-neutral-100"
+        <button className={buttonVariants({intent:"secondary",size:"small"})}
             onClick={() => addSet(exercise)}>
             add set
         </button>
