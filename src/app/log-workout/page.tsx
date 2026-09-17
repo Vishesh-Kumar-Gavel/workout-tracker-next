@@ -6,12 +6,22 @@ import { loadRoutine, Routine , RoutineExercise} from "../lib/routines";
 import WeightedExerciseSetsTable from "../components/WeightedExerciseSetsTable";
 import { DraftExercise} from "../create-routine/page";
 import { buttonVariants } from "../components/Button";
+import { DRAFT_EXERCISES_KEY } from "../create-routine/page";
 export default function LogWorkout() {
     const searchParams = useSearchParams();
     const routineId = searchParams.get('routineId');
     
     const [routine,setRoutine] = useState<Routine>();
-    const [exercies,setExercises] = useState<DraftExercise[]>([]);
+    const [exercises,setExercises] = useState<DraftExercise[]>(() => {
+      if (typeof window === "undefined") return [];
+      try {
+        const saved = sessionStorage.getItem(DRAFT_EXERCISES_KEY);
+        return saved ? JSON.parse(saved) : [];
+      } catch (e) {
+        console.error(`Failed to parse ${DRAFT_EXERCISES_KEY} from session storage`, e);
+        return [];
+      }
+    });
     useEffect(() => {
         async function getRoutine(routineId: string) {
             console.log("Fetching Routine with routine id :"+routineId);
@@ -23,7 +33,16 @@ export default function LogWorkout() {
             const res = getRoutine(routineId);
         }
     }, [routineId])
-
+    useEffect(()=>{
+      setRoutine(prevRoutine=>{
+        if(prevRoutine)
+        return {
+        ...prevRoutine,
+        exercises:exercises
+        }
+      }
+    );
+    },[exercises])
     return <div className="flex flex-col w-full">
       <header className="m-2 flex items-center justify-between px-2">
         <div>
@@ -70,7 +89,9 @@ export default function LogWorkout() {
                       <div className="truncate text-sm font-medium text-neutral-100">
                         {exercise.name}
                       </div>
-                      <WeightedExerciseSetsTable exercise={exercise as DraftExercise} draftExercises={routine.exercises as DraftExercise[]} setDraftExercises={setExercises}/>
+                      <WeightedExerciseSetsTable 
+                      exercise={exercise as DraftExercise} 
+                      draftExercises={exercises as DraftExercise[]} setDraftExercises={setExercises}/>
 
                     </div>
                   </li>

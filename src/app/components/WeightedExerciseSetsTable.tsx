@@ -33,7 +33,6 @@ export default function WeightedExerciseSetsTable({ exercise, draftExercises, se
         console.log("Reps Update: ",sReps)
     }
     function addSet(targetExercise: DraftExercise) {
-
         const newSet = {
             isWeighted: false,
             isTimed: false,
@@ -41,12 +40,19 @@ export default function WeightedExerciseSetsTable({ exercise, draftExercises, se
             durationSeconds: 0,
             reps:12
         }
+        console.log("add set called!",targetExercise.name)
+        // console.log(draftExercises);
         setDraftExercises(
-            (prevDraftExercises) => prevDraftExercises.map(
-                (exercise) => (exercise.id === targetExercise.id ?
-                    { ...exercise, sets: [...exercise.sets, newSet], }
-                    : exercise)
-            )
+            (prevDraftExercises) => { 
+                console.log("prev",prevDraftExercises);
+                const newDraftExercises =  prevDraftExercises.map(
+                    (exercise) => (exercise.id === targetExercise.id ?
+                        { ...exercise, sets: [...exercise.sets, newSet], }
+                        : exercise)
+                )
+                console.log("new",newDraftExercises);
+                return newDraftExercises;
+            }
         )
     }
     const exerciseId = String(exercise.id);
