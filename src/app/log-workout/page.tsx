@@ -91,7 +91,7 @@ export default function LogWorkout() {
                       </div>
                       <WeightedExerciseSetsTable 
                       exercise={exercise as DraftExercise} 
-                      draftExercises={exercises as DraftExercise[]} setDraftExercises={setExercises}/>
+                      draftExercises={exercises as DraftExercise[]} setDraftExercises={setExercises} checkMark={true}/>
 
                     </div>
                   </li>

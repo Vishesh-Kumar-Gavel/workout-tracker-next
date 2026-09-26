@@ -89,7 +89,7 @@ export default function CreateRoutineDetailsForm({ draftExercises, setDraftExerc
                         {exercise.equipment ? ` · ${exercise.equipment}` : ""}
                       </div>
 
-                      <WeightedExerciseSetsTable exercise={exercise} draftExercises={draftExercises} setDraftExercises={setDraftExercises} />
+                      <WeightedExerciseSetsTable exercise={exercise} draftExercises={draftExercises} setDraftExercises={setDraftExercises} checkMark={false} />
 
                     </div>
                   </li>

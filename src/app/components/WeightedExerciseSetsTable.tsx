@@ -7,30 +7,31 @@ type WeightedExerciseSetsTableProps = {
     exercise: DraftExercise,
     draftExercises: DraftExercise[],
     setDraftExercises: React.Dispatch<React.SetStateAction<DraftExercise[]>>,
+    checkMark: boolean
 }
-export default function WeightedExerciseSetsTable({ exercise, draftExercises, setDraftExercises }: WeightedExerciseSetsTableProps) {
+export default function WeightedExerciseSetsTable({ exercise, draftExercises, setDraftExercises, checkMark }: WeightedExerciseSetsTableProps) {
     useEffect(() => {
         console.log("Updated Draft Exercises: ", draftExercises);
-      }, [draftExercises]);
+    }, [draftExercises]);
 
-    function handleWeight(targetExercise: DraftExercise,sWeight:number,index:number){
+    function handleWeight(targetExercise: DraftExercise, sWeight: number, index: number) {
         setDraftExercises(
             (prevDraftExercises) => prevDraftExercises.map(
                 (exercise) => (exercise.id === targetExercise.id ?
-                    { ...exercise, sets: exercise.sets.map((s,i)=>(i===index?{...s,weight:sWeight}:s)) }
+                    { ...exercise, sets: exercise.sets.map((s, i) => (i === index ? { ...s, weight: sWeight } : s)) }
                     : exercise)
             )
         )
     }
-    function handleReps(targetExercise: DraftExercise,sReps:number,index:number){
+    function handleReps(targetExercise: DraftExercise, sReps: number, index: number) {
         setDraftExercises(
             (prevDraftExercises) => prevDraftExercises.map(
                 (exercise) => (exercise.id === targetExercise.id ?
-                    { ...exercise, sets: exercise.sets.map((s,i)=>(i===index?{...s,reps:sReps}:s)) }
+                    { ...exercise, sets: exercise.sets.map((s, i) => (i === index ? { ...s, reps: sReps } : s)) }
                     : exercise)
             )
         )
-        console.log("Reps Update: ",sReps)
+        console.log("Reps Update: ", sReps)
     }
     function addSet(targetExercise: DraftExercise) {
         const newSet = {
@@ -38,19 +39,19 @@ export default function WeightedExerciseSetsTable({ exercise, draftExercises, se
             isTimed: false,
             weight: 0,
             durationSeconds: 0,
-            reps:12
+            reps: 12
         }
-        console.log("add set called!",targetExercise.name)
+        console.log("add set called!", targetExercise.name)
         // console.log(draftExercises);
         setDraftExercises(
-            (prevDraftExercises) => { 
-                console.log("prev",prevDraftExercises);
-                const newDraftExercises =  prevDraftExercises.map(
+            (prevDraftExercises) => {
+                console.log("prev", prevDraftExercises);
+                const newDraftExercises = prevDraftExercises.map(
                     (exercise) => (exercise.id === targetExercise.id ?
                         { ...exercise, sets: [...exercise.sets, newSet], }
                         : exercise)
                 )
-                console.log("new",newDraftExercises);
+                console.log("new", newDraftExercises);
                 return newDraftExercises;
             }
         )
@@ -76,21 +77,26 @@ export default function WeightedExerciseSetsTable({ exercise, draftExercises, se
                             </td>
                             {/* Set Weights */}
                             <td className="text-left">
-                                <input type="number" step={2.5} placeholder="0" className="text-left w-20" 
-                                onChange={(e)=>{handleWeight(exercise,Number(e.target.value),index)}}/>
+                                <input type="number" step={2.5} placeholder="0" className="text-left w-20"
+                                    onChange={(e) => { handleWeight(exercise, Number(e.target.value), index) }} />
                             </td>
 
                             {/* Set Reps */}
                             <td className="text-left">
-                                <input type="number" placeholder="12" className="text-left w-20" onChange={(e)=>{handleReps(exercise,Number(e.target.value),index)}}/>
+                                <input type="number" placeholder="12" className="text-left w-20" onChange={(e) => { handleReps(exercise, Number(e.target.value), index) }} />
                             </td>
+                            {checkMark && (
+                                <td>
+                                    <input type="checkbox" />
+                                </td>
+                            )}
                         </tr>
                     ))
                 }
             </tbody>
         </table>
         {/* Add Set */}
-        <button className={buttonVariants({intent:"secondary",size:"small"})}
+        <button className={buttonVariants({ intent: "secondary", size: "small" })}
             onClick={() => addSet(exercise)}>
             add set
         </button>
